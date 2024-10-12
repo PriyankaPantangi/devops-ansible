@@ -10,10 +10,9 @@
 
   tasks:
     - name: Configure DNS settings using shell command
-      shell: echo -e 'nameserver {{ dns_primary }}
+      shell: |
+        echo -e 'nameserver {{ dns_primary }}
         nameserver {{ dns_secondary }}' > /etc/resolv.conf
-      args:
-        warn: false
       notify: Restart network
 
     # Setup IP Routing (Optional Example)
