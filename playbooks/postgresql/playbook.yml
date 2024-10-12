@@ -39,8 +39,5 @@
       args:
         creates: /var/lib/pgsql/13/data
 
-    - name: Start and enable PostgreSQL service
-      systemd:
-        name: postgresql-13
-        state: started
-        enabled: true
+    - name: Start PostgreSQL service directly
+      shell: "/usr/pgsql-13/bin/postgres -D /var/lib/pgsql/13/data &"
