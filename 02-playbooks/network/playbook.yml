@@ -1,43 +1,14 @@
 ---
 - name: Setup Network Services using Ansible
-  hosts: databases
+  hosts: servers
   remote_user: root
   become: true
   vars:
     # Variables for network configuration
     dns_primary: 8.8.8.8
     dns_secondary: 8.8.4.4
-    ntp_servers:
-      - 0.pool.ntp.org
-      - 1.pool.ntp.org
-      - 2.pool.ntp.org
 
   tasks:
-    # Task 1: Configure Firewalld
-    - name: Ensure firewalld is installed
-      dnf:
-        name: firewalld
-        state: present
-        ignore_errors: yes
-
-    - name: Start and enable firewalld service
-      systemd:
-        name: firewalld
-        state: started
-        enabled: true
-
-    - name: Open ports for HTTP, HTTPS, and PostgreSQL
-      firewalld:
-        port: "{{ item }}"
-        permanent: true
-        state: enabled
-        immediate: true
-      loop:
-        - 80/tcp
-        - 443/tcp
-        - 5432/tcp
-
-    # Task 2: Configure DNS Servers
     - name: Configure DNS settings
       lineinfile:
         path: /etc/resolv.conf
@@ -50,29 +21,7 @@
         - "{{ dns_secondary }}"
       notify: Restart network
 
-    # Task 3: Configure NTP for Time Synchronization
-    - name: Ensure chrony is installed
-      dnf:
-        name: chrony
-        state: present
-
-    - name: Configure NTP servers
-      blockinfile:
-        path: /etc/chrony.conf
-        marker: "# {mark} ANSIBLE MANAGED NTP SETTINGS"
-        block: |
-          server {{ ntp_servers[0] }} iburst
-          server {{ ntp_servers[1] }} iburst
-          server {{ ntp_servers[2] }} iburst
-      notify: Restart chronyd
-
-    - name: Start and enable chrony service
-      systemd:
-        name: chronyd
-        state: started
-        enabled: true
-
-    # Task 4: Setup IP Routing (Optional Example)
+    # Setup IP Routing (Optional Example)
     - name: Configure static route
       lineinfile:
         path: /etc/sysconfig/network-scripts/route-eth0
@@ -83,9 +32,4 @@
     - name: Restart network
       service:
         name: network
-        state: restarted
-
-    - name: Restart chronyd
-      service:
-        name: chronyd
         state: restarted
