@@ -56,7 +56,7 @@
 
     - name: Copy application files to server
       copy:
-        src: /path/to/your/app
+        src: html
         dest: /var/www/html/{{ app_name }}
         owner: www-data
         group: www-data
@@ -69,6 +69,7 @@
   ignore_errors: true
   vars:
     app_name: 'web_app'  
+    web_port: 80
   tasks:
     - name: Install nginx
       apt:
