@@ -5,11 +5,14 @@
   ignore_errors: true
 
   vars:
-    db_root_password: 'secure_password'
-    app_name: 'web_app'
-    web_port: 8080
+    db_root_password: 'secure_password'  
 
   tasks:
+    - name: Install Python MySQL dependencies
+      apt:
+        name:
+          - python3-pymysql
+        state: present  
     - name: Install MySQL server
       apt:
         name: mysql-server
@@ -35,6 +38,8 @@
   hosts: ungrouped
   become: true
   ignore_errors: true
+  vars:
+    app_name: 'web_app'
   tasks:
     - name: Install dependencies for the application
       apt:
@@ -62,6 +67,8 @@
   hosts: ungrouped
   become: true
   ignore_errors: true
+  vars:
+    app_name: 'web_app'  
   tasks:
     - name: Install nginx
       apt:
