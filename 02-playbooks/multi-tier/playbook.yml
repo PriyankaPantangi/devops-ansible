@@ -2,6 +2,7 @@
 - name: Orchestrate Multi-Tier Application Deployment
   hosts: ungrouped
   become: true
+  ignore_errors: true
 
   vars:
     db_root_password: 'secure_password'
@@ -19,6 +20,7 @@
         name: mysql
         state: started
         enabled: true
+        use: "/usr/sbin/service"
 
     - name: Set MySQL root password
       mysql_user:
@@ -32,6 +34,7 @@
 - name: Deploy Application Backend
   hosts: ungrouped
   become: true
+  ignore_errors: true
   tasks:
     - name: Install dependencies for the application
       apt:
@@ -58,6 +61,7 @@
 - name: Configure Web Frontend
   hosts: ungrouped
   become: true
+  ignore_errors: true
   tasks:
     - name: Install nginx
       apt:
