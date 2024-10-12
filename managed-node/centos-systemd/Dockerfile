@@ -23,12 +23,16 @@ RUN sed -i 's/#PermitRootLogin yes/PermitRootLogin yes/' /etc/ssh/sshd_config &&
 
 # Ensure that SSHD runs with an absolute path
 RUN ln -sf /usr/sbin/sshd /usr/bin/sshd
-    
+
 # Expose SSH Port
 EXPOSE 22
 
-# Start systemd
+# Start SSH service explicitly after systemd initialization
+STOPSIGNAL SIGRTMIN+3
 CMD ["/usr/sbin/init"]
+
+# Run SSH Daemon after systemd initialization
+RUN systemctl enable sshd
 
 # docker build -t brainupgrade/centos-systemd:20241012 .
 # docker run -d brainupgrade/centos-systemd:20241012 
