@@ -9,10 +9,13 @@
     dns_secondary: 8.8.4.4
 
   tasks:
-    - name: Configure DNS settings using template
-      template:
-        src: resolv.conf.j2
-        dest: /etc/resolv.conf
+    - name: Configure DNS settings using blockinfile
+      blockinfile:
+        path: /etc/resolv.conf
+        block: |
+          nameserver {{ dns_primary }}
+          nameserver {{ dns_secondary }}
+        create: yes
       notify: Restart network
 
     # Setup IP Routing (Optional Example)
