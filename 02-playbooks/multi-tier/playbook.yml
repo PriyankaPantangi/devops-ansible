@@ -10,28 +10,24 @@
     web_port: 8080
 
   tasks:
-    # Database Tier (dbtier)
-    - name: Install and start MySQL server
-      hosts: ungrouped
-      tasks:
-        - name: Install MySQL server
-          yum:
-            name: mysql-server
-            state: present
+    - name: Install MySQL server
+      yum:
+        name: mysql-server
+        state: present
 
-        - name: Start and enable MySQL service
-          systemd:
-            name: mysqld
-            state: started
-            enabled: true
+    - name: Start and enable MySQL service
+      systemd:
+        name: mysqld
+        state: started
+        enabled: true
 
-        - name: Set MySQL root password
-          mysql_user:
-            login_user: root
-            login_password: ''
-            name: root
-            password: "{{ db_root_password }}"
-          when: db_root_password != ''
+    - name: Set MySQL root password
+      mysql_user:
+        login_user: root
+        login_password: ''
+        name: root
+        password: "{{ db_root_password }}"
+      when: db_root_password != ''
 
     # Application Tier (fronttier)
     - name: Deploy Application Backend
