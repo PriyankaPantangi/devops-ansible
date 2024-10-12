@@ -3,7 +3,6 @@
   hosts: ungrouped
   remote_user: root
   become: true
-  ignore_errors: true
 
   vars:
     db_root_password: 'secure_password'
@@ -12,16 +11,15 @@
 
   tasks:
     - name: Install MySQL server
-      yum:
+      apt:
         name: mysql-server
         state: present
 
     - name: Start and enable MySQL service
       service:
-        name: mysqld
+        name: mysql
         state: started
         enabled: true
-        use: "/usr/sbin/service"
 
     - name: Set MySQL root password
       mysql_user:
@@ -31,38 +29,34 @@
         password: "{{ db_root_password }}"
       when: db_root_password != ''
 
-# Application Tier (fronttier)
+# Application Tier
 - name: Deploy Application Backend
   hosts: ungrouped
-  remote_user: root
-  become: true
-  ignore_errors: true
   tasks:
     - name: Install dependencies for the application
-      yum:
-        name: httpd, python3
+      apt:
+        name:
+          - apache2
+          - python3
         state: present
 
     - name: Start and enable Apache service
-      systemd:
-        name: httpd
+      service:
+        name: apache2
         state: started
         enabled: true
 
     - name: Copy application files to server
       copy:
-        src: html
+        src: /path/to/your/app
         dest: /var/www/html/{{ app_name }}
-        owner: apache
-        group: apache
+        owner: www-data
+        group: www-data
         mode: '0755'
 
 # Web Tier
 - name: Configure Web Frontend
   hosts: ungrouped
-  remote_user: root
-  become: true
-  ignore_errors: true
   tasks:
     - name: Install nginx
       apt:
