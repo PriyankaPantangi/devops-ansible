@@ -25,5 +25,5 @@
   handlers:
     - name: Restart network
       service:
-        name: NetworkManager
+        name: network
         state: restarted
