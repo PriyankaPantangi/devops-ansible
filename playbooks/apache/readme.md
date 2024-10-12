@@ -1,0 +1,40 @@
+# Setup - Control Node
+sudo apt update
+sudo apt install ansible -y
+ansible --version
+
+## Launch managed node
+kubectl run node1 --image brainupgrade/ubuntu-ssh-ansible:20241012 --env USERNAME=ubuntu --env PASSWORD=brainupgrade
+
+## Configure SSH on managed nodes
+ssh-keygen -t rsa
+ssh-copy-id ubuntu@node1
+
+
+# Run playbook
+ansible-playbook -i inventory.ini install_apache.yml --ask-become-pass --become-method=sudo 
+
+# Verification
+ssh ubuntu@node1
+sudo service apache2 status
+
+## Alternate 
+ansible webservers -m command -i inventory.ini -a "service apache2 status"
+
+<managed-node-ip>:<port>    
+
+# Other commands
+
+## Verify inventory
+ansible-inventory -i inventory.ini --list
+
+## Ping host group
+ansible webservers -u ubuntu -m ping -i inventory.ini 
+
+ansible webservers -i inventory.ini -m ping --ask-become-pass  --become-method=sudo
+
+## Display inventory info
+ansible-playbook -i inventory.ini install_apache.yml --ask-become-pass --become-method=sudo 
+
+## Display modules and other useful info
+ansible-doc -l
