@@ -18,7 +18,7 @@
         state: present
 
     - name: Start and enable Apache service
-      systemd:
+      service:
         name: apache2
         state: started
         enabled: true
@@ -38,6 +38,6 @@
 
   handlers:
     - name: Restart Apache
-      systemd:
+      service:
         name: apache2
         state: restarted
