@@ -1,7 +1,7 @@
 ---
 - name: Configure Web Server using Ansible
   hosts: webservers
-  remote_user: root
+  remote_user: ubuntu
   become: true
   vars:
     http_port: 80
