@@ -1,0 +1,43 @@
+---
+- name: Configure Web Server using Ansible
+  hosts: webservers
+  remote_user: root
+  become: true
+  vars:
+    http_port: 80
+    document_root: /var/www/html
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Apache Web Server
+      apt:
+        name: apache2
+        state: present
+
+    - name: Start and enable Apache service
+      systemd:
+        name: apache2
+        state: started
+        enabled: true
+
+    - name: Create a custom index.html page
+      copy:
+        content: "<h1>Welcome to Ansible Configured Web Server!</h1>"
+        dest: "{{ document_root }}/index.html"
+
+    - name: Ensure proper permissions on the document root
+      file:
+        path: "{{ document_root }}"
+        state: directory
+        mode: '0755'
+        owner: www-data
+        group: www-data
+
+  handlers:
+    - name: Restart Apache
+      systemd:
+        name: apache2
+        state: restarted
