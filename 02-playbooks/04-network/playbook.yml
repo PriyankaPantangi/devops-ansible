@@ -1,0 +1,17 @@
+---
+- name: Setup Network Services using Ansible
+  hosts: servers
+  remote_user: ubuntu
+  become: true
+  vars:
+    # Variables for network configuration
+    dns_primary: 8.8.8.8
+    dns_secondary: 8.8.4.4
+
+  tasks:
+    - name: Configure DNS settings using shell command
+      shell: |
+        echo 'nameserver {{ dns_primary }}
+        nameserver {{ dns_secondary }}' > /etc/resolv.conf  
+
+
