@@ -9,16 +9,10 @@
     dns_secondary: 8.8.4.4
 
   tasks:
-    - name: Configure DNS settings
-      lineinfile:
-        path: /etc/resolv.conf
-        regexp: '^nameserver'
-        line: "nameserver {{ item }}"
-        state: present
-        create: yes
-      loop:
-        - "{{ dns_primary }}"
-        - "{{ dns_secondary }}"
+    - name: Configure DNS settings using template
+      template:
+        src: resolv.conf.j2
+        dest: /etc/resolv.conf
       notify: Restart network
 
     # Setup IP Routing (Optional Example)
@@ -31,5 +25,5 @@
   handlers:
     - name: Restart network
       service:
-        name: network
+        name: NetworkManager
         state: restarted
