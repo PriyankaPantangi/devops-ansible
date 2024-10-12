@@ -11,22 +11,35 @@
       name: httpd
       state: latest
 
-  - name: Write the apache config file
+  - name: Write the index file
     ansible.builtin.template:
-      src: /srv/httpd.j2
-      dest: /etc/httpd.conf
+      src: index.html
+      dest: /var/www/html/index.html
 
-- name: Update db servers
-  hosts: databases
+- name: Install PostgreSQL on Ansible Managed Node
+  hosts: managed_nodes
   remote_user: root
-
   tasks:
-  - name: Ensure postgresql is at the latest version
-    ansible.builtin.yum:
-      name: postgresql
-      state: latest
+    - name: Ensure PostgreSQL repository is added
+      yum:
+        name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+        state: present
 
-  - name: Ensure that postgresql is started
-    ansible.builtin.service:
-      name: postgresql
-      state: started
+    - name: Disable built-in PostgreSQL module
+      shell: dnf -qy module disable postgresql
+
+    - name: Install PostgreSQL server
+      yum:
+        name: postgresql13-server
+        state: present
+
+    - name: Initialize PostgreSQL database
+      command: /usr/pgsql-13/bin/postgresql-13-setup initdb
+      args:
+        creates: /var/lib/pgsql/13/data
+
+    - name: Start and enable PostgreSQL service
+      systemd:
+        name: postgresql-13
+        state: started
+        enabled: true
