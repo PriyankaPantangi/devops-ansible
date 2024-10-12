@@ -1,7 +1,6 @@
 ---
 - name: Orchestrate Multi-Tier Application Deployment
   hosts: ungrouped
-  remote_user: root
   become: true
 
   vars:
@@ -32,6 +31,7 @@
 # Application Tier
 - name: Deploy Application Backend
   hosts: ungrouped
+  become: true
   tasks:
     - name: Install dependencies for the application
       apt:
@@ -57,6 +57,7 @@
 # Web Tier
 - name: Configure Web Frontend
   hosts: ungrouped
+  become: true
   tasks:
     - name: Install nginx
       apt:
