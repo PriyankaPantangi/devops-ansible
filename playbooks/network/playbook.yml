@@ -15,9 +15,10 @@
   tasks:
     # Task 1: Configure Firewalld
     - name: Ensure firewalld is installed
-      yum:
+      dnf:
         name: firewalld
         state: present
+        ignore_errors: yes
 
     - name: Start and enable firewalld service
       systemd:
@@ -51,7 +52,7 @@
 
     # Task 3: Configure NTP for Time Synchronization
     - name: Ensure chrony is installed
-      yum:
+      dnf:
         name: chrony
         state: present
 
