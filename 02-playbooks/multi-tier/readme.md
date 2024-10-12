@@ -7,4 +7,4 @@ ssh-copy-id root@multitier
 
 
 # Run playbook
-ansible-playbook -i inventory.ini playbook.ini
+ansible-playbook -i inventory.ini playbook.yml
