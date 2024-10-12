@@ -21,18 +21,13 @@
   remote_user: root
   become: true
   tasks:
-    - name: Import PostgreSQL GPG key from alternative source
-      rpm_key:
-        state: present
-        key: https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
+    - name: Add key
+      shell: dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
     - name: Ensure PostgreSQL repository is added
       yum:
         name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
         state: present
-
-    - name: Disable built-in PostgreSQL module
-      shell: dnf -qy module disable postgresql
 
     - name: Install PostgreSQL server
       yum:
