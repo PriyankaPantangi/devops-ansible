@@ -21,7 +21,7 @@
     - name: Start and enable MySQL service
       service:
         name: mysql
-        state: started
+        state: restarted
         enabled: true
         use: "/usr/sbin/service"
     - name: Wait for MySQL to be ready
@@ -31,13 +31,6 @@
         state: started
         delay: 10
         timeout: 300
-    - name: Set MySQL root password
-      mysql_user:
-        login_user: root
-        login_password: ''
-        name: root
-        password: "{{ db_root_password }}"
-      when: db_root_password != ''
 
 # Application Tier / middle tier
 - name: Deploy Application Backend
