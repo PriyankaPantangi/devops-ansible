@@ -17,7 +17,7 @@
       dest: /var/www/html/index.html
 
 - name: Install PostgreSQL on Ansible Managed Node
-  hosts: managed_nodes
+  hosts: databases
   remote_user: root
   tasks:
     - name: Import PostgreSQL GPG key
