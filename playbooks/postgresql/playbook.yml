@@ -17,9 +17,14 @@
       dest: /var/www/html/index.html
 
 - name: Install PostgreSQL on Ansible Managed Node
-  hosts: databases
+  hosts: managed_nodes
   remote_user: root
   tasks:
+    - name: Import PostgreSQL GPG key
+      rpm_key:
+        state: present
+        key: https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
+
     - name: Ensure PostgreSQL repository is added
       yum:
         name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
