@@ -9,13 +9,11 @@
     dns_secondary: 8.8.4.4
 
   tasks:
-    - name: Configure DNS settings using blockinfile
-      blockinfile:
-        path: /etc/resolv.conf
-        block: |
-          nameserver {{ dns_primary }}
-          nameserver {{ dns_secondary }}
-        create: yes
+    - name: Configure DNS settings using shell command
+      shell: echo -e 'nameserver {{ dns_primary }}
+        nameserver {{ dns_secondary }}' > /etc/resolv.conf
+      args:
+        warn: false
       notify: Restart network
 
     # Setup IP Routing (Optional Example)
