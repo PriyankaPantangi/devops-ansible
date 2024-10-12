@@ -29,49 +29,53 @@
         password: "{{ db_root_password }}"
       when: db_root_password != ''
 
-    # Application Tier (fronttier)
-    - name: Deploy Application Backend
-      hosts: ungrouped
-      tasks:
-        - name: Install dependencies for the application
-          yum:
-            name: httpd, python3
-            state: present
+# Application Tier (fronttier)
+- name: Deploy Application Backend
+  hosts: ungrouped
+  remote_user: root
+  become: true
+  tasks:
+    - name: Install dependencies for the application
+      yum:
+        name: httpd, python3
+        state: present
 
-        - name: Start and enable Apache service
-          systemd:
-            name: httpd
-            state: started
-            enabled: true
+    - name: Start and enable Apache service
+      systemd:
+        name: httpd
+        state: started
+        enabled: true
 
-        - name: Copy application files to server
-          copy:
-            src: html
-            dest: /var/www/html/{{ app_name }}
-            owner: apache
-            group: apache
-            mode: '0755'
+    - name: Copy application files to server
+      copy:
+        src: html
+        dest: /var/www/html/{{ app_name }}
+        owner: apache
+        group: apache
+        mode: '0755'
 
-    # Web Tier
-    - name: Configure Web Frontend
-      hosts: ungrouped
-      tasks:
-        - name: Install nginx
-          apt:
-            name: nginx
-            state: present
+# Web Tier
+- name: Configure Web Frontend
+  hosts: ungrouped
+  remote_user: root
+  become: true
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
 
-        - name: Configure nginx reverse proxy
-          template:
-            src: nginx.conf.j2
-            dest: /etc/nginx/sites-available/{{ app_name }}.conf
-          notify: Restart nginx
+    - name: Configure nginx reverse proxy
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ app_name }}.conf
+      notify: Restart nginx
 
-        - name: Enable nginx site
-          file:
-            src: /etc/nginx/sites-available/{{ app_name }}.conf
-            dest: /etc/nginx/sites-enabled/{{ app_name }}.conf
-            state: link
+    - name: Enable nginx site
+      file:
+        src: /etc/nginx/sites-available/{{ app_name }}.conf
+        dest: /etc/nginx/sites-enabled/{{ app_name }}.conf
+        state: link
 
   handlers:
     - name: Restart nginx
