@@ -1,0 +1,84 @@
+---
+- name: Orchestrate Multi-Tier Application Deployment
+  hosts: ungrouped
+  remote_user: root
+  become: true
+
+  vars:
+    db_root_password: 'secure_password'
+    app_name: 'web_app'
+    web_port: 8080
+
+  tasks:
+    # Database Tier (dbtier)
+    - name: Install and start MySQL server
+      hosts: ungrouped
+      tasks:
+        - name: Install MySQL server
+          yum:
+            name: mysql-server
+            state: present
+
+        - name: Start and enable MySQL service
+          systemd:
+            name: mysqld
+            state: started
+            enabled: true
+
+        - name: Set MySQL root password
+          mysql_user:
+            login_user: root
+            login_password: ''
+            name: root
+            password: "{{ db_root_password }}"
+          when: db_root_password != ''
+
+    # Application Tier (fronttier)
+    - name: Deploy Application Backend
+      hosts: ungrouped
+      tasks:
+        - name: Install dependencies for the application
+          yum:
+            name: httpd, python3
+            state: present
+
+        - name: Start and enable Apache service
+          systemd:
+            name: httpd
+            state: started
+            enabled: true
+
+        - name: Copy application files to server
+          copy:
+            src: html
+            dest: /var/www/html/{{ app_name }}
+            owner: apache
+            group: apache
+            mode: '0755'
+
+    # Web Tier
+    - name: Configure Web Frontend
+      hosts: ungrouped
+      tasks:
+        - name: Install nginx
+          apt:
+            name: nginx
+            state: present
+
+        - name: Configure nginx reverse proxy
+          template:
+            src: nginx.conf.j2
+            dest: /etc/nginx/sites-available/{{ app_name }}.conf
+          notify: Restart nginx
+
+        - name: Enable nginx site
+          file:
+            src: /etc/nginx/sites-available/{{ app_name }}.conf
+            dest: /etc/nginx/sites-enabled/{{ app_name }}.conf
+            state: link
+
+  handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
