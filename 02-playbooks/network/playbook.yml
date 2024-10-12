@@ -24,6 +24,6 @@
 
   handlers:
     - name: Restart network
-      service:
-        name: networking
-        state: restarted
+      shell: |
+        ip link set eth0 down
+        ip link set eth0 up
