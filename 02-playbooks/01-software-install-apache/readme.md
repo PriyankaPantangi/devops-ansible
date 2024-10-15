@@ -1,16 +1,18 @@
 ## Launch managed node
 kubectl run ubuntuapache --image brainupgrade/ubuntu-ssh-ansible:20241012 --env USERNAME=ubuntu --env PASSWORD=brainupgrade
 
+kubectl expose pod ubuntuapache --port 22 --target-port 22
+
 ## Configure SSH on managed nodes
 ssh-keygen -t rsa
-ssh-copy-id ubuntu@ubuntuapache
+ssh-copy-id ubuntu@ubuntuapache.<username>
 
 
 # Run playbook
 ansible-playbook -i inventory.ini install_apache.yml --ask-become-pass --become-method=sudo 
 
 # Verification
-ssh ubuntu@ubuntuapache
+ssh ubuntu@ubuntuapache.<username>
 sudo service apache2 status
 
 ## Alternate 
