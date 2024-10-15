@@ -10,3 +10,6 @@ ssh-copy-id root@servernginx.<username>
 ansible-galaxy role install geerlingguy.nginx
 # Launch playbook
 ansible-playbook -i inventory.ini playbook.yml
+
+# Verification
+ansible all -m command -a "ls /usr/share/nginx/html" -i inventory.ini  --user root
