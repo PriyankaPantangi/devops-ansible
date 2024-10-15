@@ -6,5 +6,7 @@ k expose pod servernginx  --port 22 --target-port 22
 # add ssh key 
 ssh-copy-id root@servernginx.<username>
 
+# Download the nginx role
+ansible-galaxy role install geerlingguy.nginx
 # Launch playbook
 ansible-playbook -i inventory.ini playbook.yml
