@@ -8,4 +8,4 @@ kubectl expose pod nodeconfig --port 22 --target-port 22
 ssh-copy-id ubuntu@nodeconfig.<username>
 
 # Run     playbook
-ansible-playbook -i inventory.ini playbook.yml
+ansible-playbook -i inventory.ini playbook.yml --ask-become-pass
