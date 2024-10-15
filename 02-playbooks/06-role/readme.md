@@ -1,10 +1,9 @@
 # Launch rhel server for webserver installation
-k run servernginx --image brainupgrade/rhel-ssh-ansible:20241012 
-
-k expose pod servernginx  --port 22 --target-port 22
+k run centos --image brainupgrade/ansible-node-centos:20241016v3 --privileged
+k expose pod centos --port 22 --target-port 22
 
 # add ssh key 
-ssh-copy-id root@servernginx.<username>
+ssh-copy-id root@centos.<username>
 
 # Download the nginx role
 ansible-galaxy role install geerlingguy.nginx
@@ -12,4 +11,4 @@ ansible-galaxy role install geerlingguy.nginx
 ansible-playbook -i inventory.ini playbook.yml
 
 # Verification
-ansible all -m command -a "ls /usr/share/nginx/html" -i inventory.ini  --user root
+ansible all -m command -a "systemctl status nginx" -i inventory.ini  --user root
