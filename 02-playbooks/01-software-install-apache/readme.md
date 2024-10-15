@@ -26,9 +26,9 @@ ansible webservers -m command -i inventory.ini -a "service apache2 status"
 ansible-inventory -i inventory.ini --list
 
 ## Ping host group
-ansible webservers -u ubuntu -m ping -i inventory.ini 
+ansible webservers -m ping -i inventory.ini 
 
-ansible webservers -i inventory.ini -m ping --ask-become-pass  --become-method=sudo
+<!-- ansible webservers -i inventory.ini -m ping --ask-become-pass  --become-method=sudo -->
 
 ## Display inventory info
  <!-- ansible-playbook -i inventory.ini install_apache.yml --ask-become-pass --become-method=sudo  -->
