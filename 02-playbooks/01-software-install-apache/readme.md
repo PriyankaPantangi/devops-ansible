@@ -1,16 +1,16 @@
 ## Launch managed node
-kubectl run nodeinstall --image brainupgrade/ubuntu-ssh-ansible:20241012 --env USERNAME=ubuntu --env PASSWORD=brainupgrade
+kubectl run ubuntuapache --image brainupgrade/ubuntu-ssh-ansible:20241012 --env USERNAME=ubuntu --env PASSWORD=brainupgrade
 
 ## Configure SSH on managed nodes
 ssh-keygen -t rsa
-ssh-copy-id ubuntu@nodeinstall
+ssh-copy-id ubuntu@ubuntuapache
 
 
 # Run playbook
 ansible-playbook -i inventory.ini install_apache.yml --ask-become-pass --become-method=sudo 
 
 # Verification
-ssh ubuntu@nodeinstall
+ssh ubuntu@ubuntuapache
 sudo service apache2 status
 
 ## Alternate 
